@@ -8,14 +8,15 @@ import LocationUI from '../LocationUI/LocationUI';
 import MyPlaceUI from '../MyPlaceUI/MyPlaceUI';
 import ProximityReport from '../ProximityReport/ProximityReport';
 import MyPlaceReport from '../MyPlaceReport/MyPlaceReport';
+import Score from '../Score/Score';
 
 const FACILITIES_ARR = ['Metro Station', 'Bus Station', 'Park', 'Coffee shop', 'Gas station', 'Hospital', 'Grocery', 'School']
 const FACILITIES_ON_ARR = [0, 0, 0, 0, 0, 0, 0, 0];
 const FACILITIES_COLOR_MAP = ['#47476b', '#0033cc', '#339933', '#cc6600', '#000000', '#ee0000', '#3399ff', '#cc0099']
 const FACILITIES_CNT_ARR = [10, 10, 10, 10, 5, 10, 10, 10];
-// const FACILITIES_CNT_REPORT_ARR = [10, 10, 20, 25, 5, 10, 25, 15];
-const FACILITIES_CNT_REPORT_ARR = [1, 1, 1, 1, 1, 1, 1, 1];
-const TEMP_TOKEN = 'B17x9Ju4lA9x2xnUpXIGxuEfsjBEN-OvfyfFVCvaXYZt3JMzgXQXe4RPGPPIcAXepcVlNjSCyWFQc4ieVhTscJy-TZqvv0otYq6uM-T5EQTIXquGGmtGqRoBJp-ae2COYoidsdFqxecaMzK7PSoqWg..';
+const FACILITIES_CNT_REPORT_ARR = [10, 10, 20, 25, 5, 10, 25, 15];
+// const FACILITIES_CNT_REPORT_ARR = [1, 1, 1, 1, 1, 1, 1, 1];
+const TEMP_TOKEN = 'XxoyHxWwb0hA5Hmi3BnNVh9rH_xk3Xg4eP_tdzTjb6c2X_tqbwNu8uj3hA5Z6t4ZDCHAPfkkjWLxrWQ9pKAteE_75zd42Z6Wq6fvf8ipdbXnkRNiuefbWD9YWiLwzJaRoXYgVNnJSGhfYmJI3cejPw..';
 
 class WebMap extends Component {
     constructor(props) {
@@ -95,7 +96,7 @@ class WebMap extends Component {
         const simpleMarkerSymbol = {
             type: "simple-marker",
             color: [226, 10, 10],  // red
-            // style: 'diamond',
+            style: 'diamond',
             outline: {
                 color: [0, 0, 0], // black
                 width: 1
@@ -309,7 +310,6 @@ class WebMap extends Component {
             });
         this.getTravelTime(targetLocation, myPlaceLocation, 'walk')
             .then(res => {
-                console.log(res);
                 this.setState({
                     ...this.state,
                     myPlaceDataWalkTime: {
@@ -338,6 +338,7 @@ class WebMap extends Component {
                     let pt2 = {x: item.location.x, y: item.location.y}
                     this.getTravelTime(pt1, pt2, 'walk')
                         .then(resTime => {
+                            console.log(resTime);
                             this.setState({
                                 ...this.state,
                                 walkTimeData: {
@@ -359,11 +360,27 @@ class WebMap extends Component {
         }
     }
 
+    getPointTract = () => {
+        const query = {
+            geometry: this.state.targetLocation,
+            distance: 2,
+            spatialRelationship: 'intersect',
+            outFields: ["Point_Count"],
+            returnGeometry: true,
+            // where: sqlExpression
+        };
+        console.log(query);
+        this.nypdComplaintLayer.queryFeatures(query).then(result => {
+            console.log(query);
+            console.log(result);
+        });
+    }
+
     componentDidMount() {
         // lazy load the required ArcGIS API for JavaScript modules and CSS
         loadModules(['esri/Map', 'esri/views/MapView', "esri/widgets/BasemapGallery", "esri/tasks/Locator",
-                     "esri/Graphic", "esri/layers/GraphicsLayer"], { css: true })
-            .then(([ArcGISMap, MapView, BasemapGallery, Locator, Graphic, GraphicsLayer]) => {
+                     "esri/Graphic", "esri/layers/GraphicsLayer", "esri/layers/FeatureLayer"], { css: true })
+            .then(([ArcGISMap, MapView, BasemapGallery, Locator, Graphic, GraphicsLayer, FeatureLayer]) => {
                 const map = new ArcGISMap({
                     basemap: 'topo-vector'
                 });
@@ -461,9 +478,11 @@ class WebMap extends Component {
 
                 this.graphicModule = Graphic;
 
-                // document.getElementById('myPlaceButton').addEventListener('click', () => {
+                this.nypdComplaintLayer = new FeatureLayer({
+                    url: 'https://services7.arcgis.com/wNLHtVTLZ9qrfNoj/arcgis/rest/services/956637/FeatureServer/0?token=-S4fdJxK6GSAFIE2WvM9rbYVYk8LzWhwMr3CmNz-rxiK26vVO6WcAYMRwR7ox-eq0t316AHe-AQQrHejm0QUPHeYmivWuqHykIMFVvHam7PMmdybbMphsVnmnuVrXGVLb-ladt1JT_XxnttsyE5PYZ66Xq5oyBBUgFFE4vJG4p-z98WmiGjaPFL0b1PYK9M5W1hR-4DfcIBC4e-vqTY-14WkMSZ9wcNW785aOLm16Ew.'
+                });
 
-                // });
+                // map.add(this.nypdComplaintLayer)
             });
     }
     
@@ -504,6 +523,20 @@ class WebMap extends Component {
             );
         }
 
+        let scoreDiv;
+        if (Object.keys(this.state.walkTimeData).reduce((t, key) => t + this.state.walkTimeData[key].length, 0) === walkTimeCntSum &&
+            this.state.myPlaceArr.length === Object.keys(this.state.myPlaceDataWalkTime).length &&
+            this.state.myPlaceArr.length === Object.keys(this.state.myPlaceDataDriveTime).length) {
+            console.log('score');
+            scoreDiv = (
+                <Score
+                    myPlaceArr={this.state.myPlaceArr}
+                    myPlaceDataDriveDistance={this.state.myPlaceDataDriveDistance}
+                    walkTimeData={this.state.walkTimeData}
+                />
+            )
+        }
+
         let reportButton;
         if (this.state.targetLocation) {
             reportButton = (
@@ -529,8 +562,10 @@ class WebMap extends Component {
                 <div className={styles.reportButtonDiv}>
                     { reportButton }
                 </div>
+                { scoreDiv }
                 { proximityReportDiv }
                 { myPlaceReportDiv }
+                {/* <Button onClick={this.getPointTract}>Test Query</Button> */}
             </div>  
         );
     }

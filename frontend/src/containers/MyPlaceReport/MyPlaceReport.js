@@ -20,9 +20,9 @@ const MyPlaceReport = (props) => {
             return (
                 <Table.Row key={myPlace.myPlaceName}>
                     <Table.Cell>{myPlace.myPlaceName}</Table.Cell>
-                    <Table.Cell>{distance}</Table.Cell>
-                    <Table.Cell>{walkTime}</Table.Cell>
-                    <Table.Cell>{driveTime}</Table.Cell>
+                    <Table.Cell>{distance.toFixed(2) + ' miles'}</Table.Cell>
+                    <Table.Cell>{walkTime.toFixed(0) + ' minutes'}</Table.Cell>
+                    <Table.Cell>{driveTime.toFixed(0) + ' minutes'}</Table.Cell>
                 </Table.Row>
             )
         })
