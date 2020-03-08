@@ -1,3 +1,47 @@
 .suggestionItemDiv:hover {
     cursor: pointer;
 }
+
+.suggestionItemDiv {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.myPlaceSuggestionDiv {
+    text-align: left;
+    margin-top: 15px;
+    margin-left: 30%;
+}
+
+.myPlaceSaveDiv {
+    font-size: 1.2rem;
+}
+
+.myPlaceSaveNameSpan {
+    margin-right: 15px;
+}
+
+.myPlaceUIDiv {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.myPlacesHeaderDiv {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.myPlaceItemDiv {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.myPlaceDiv {
+    margin-bottom: 20px;
+}
+
+.myPlaceNameSpan {
+    font-size: 1.3rem;
+    margin-right: 10px;
+}

@@ -23,7 +23,7 @@ class MyPlaceUI extends Component {
             <Input type='text' placeholder='Search...' action>
                 <input onChange={this.props.onChangeMyPlaceInput} value={this.props.myPlaceInputText}/>
                 <Select compact options={options} defaultValue='name' />
-                <Button type='submit'>
+                <Button type='submit' color='teal'>
                     Search
                 </Button>
             </Input>
@@ -33,12 +33,12 @@ class MyPlaceUI extends Component {
         let myPlaceSaveDiv;
         if (this.props.currMyPlace) {
             myPlaceSaveDiv = (
-                <div>
-                    <div>{this.props.currMyPlace.text}</div>
-                    <Input type='text' placeholder='Save this place as'>
+                <div className={styles.myPlaceSaveDiv}>
+                    <span className={styles.myPlaceSaveNameSpan}>{this.props.currMyPlace.text}</span>
+                    <Input type='text' placeholder='Save this place as' size='mini'>
                         <input onChange={this.props.onMyPlaceSaveInput} value={this.props.myPlaceSaveInputText}/>
                     </Input>
-                    <Button onClick={this.props.onMyPlaceSave}>
+                    <Button onClick={this.props.onMyPlaceSave} id='myPlaceButton' color='blue'>
                         Save
                     </Button>
                 </div>
@@ -57,12 +57,11 @@ class MyPlaceUI extends Component {
         }
 
         let myPlaceArrDiv;
-        console.log(this.props.myPlaceArr);
         if (this.props.myPlaceArr) {
             myPlaceArrDiv = this.props.myPlaceArr.map(myPlace => {
                 return (
-                    <div key={myPlace.magicKey}>
-                        <strong>{myPlace.myPlaceName}</strong> {myPlace.locationName}
+                    <div key={myPlace.locationMagicKey} className={styles.myPlaceItemDiv}>
+                        <span className={styles.myPlaceNameSpan}><strong>{myPlace.myPlaceName}</strong></span> {myPlace.locationName}
                     </div>
                 );
             });
@@ -71,18 +70,20 @@ class MyPlaceUI extends Component {
         let myPlaceHeader;
         if (this.props.myPlaceArr.length > 0) {
             myPlaceHeader = (
-                <div>
+                <div className={styles.myPlacesHeaderDiv}>
                     My Places
                 </div>
             )
         }
 
         return (
-            <div>
-                { myPlaceHeader }
-                { myPlaceArrDiv }
+            <div className={styles.myPlaceUIDiv}>
+                <div className={styles.myPlaceDiv}>
+                    { myPlaceHeader }
+                    { myPlaceArrDiv }
+                </div>
                 { myPlaceInput }
-                <div>
+                <div className={styles.myPlaceSuggestionDiv}>
                     { myPlaceSuggestionDivArr }
                     { myPlaceSaveDiv }
                 </div>

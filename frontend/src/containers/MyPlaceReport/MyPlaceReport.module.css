@@ -1,0 +1,11 @@
+.reportDiv {
+    width: 80%;
+    text-align: center;
+    margin-left: 10%;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.reportTitle {
+    font-size: 2rem;
+}

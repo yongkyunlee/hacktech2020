@@ -1,3 +1,9 @@
 .webmap {
     height: 700px;
 }
+
+
+.reportButtonDiv {
+    width: 100%;
+    text-align: center;
+}
