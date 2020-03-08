@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Route, Switch, Router, Redirect } from 'react-router-dom';
-import createHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
 
 import WebMap from './containers/WebMap/WebMap';
 
-const history = createHistory();
+const history = createBrowserHistory();
 
 class App extends Component {
   render() {

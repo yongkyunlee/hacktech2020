@@ -1,9 +1,11 @@
 import React, { Component, useRef } from 'react';
 import { loadModules } from 'esri-loader';
+import axios from 'axios';
 import styles from './WebMap.module.css';
 import { Button } from 'semantic-ui-react'
 
-import MapUI from '../MapUI/MapUI';
+import LocationUI from '../LocationUI/LocationUI';
+import MyPlaceUI from '../MyPlaceUI/MyPlaceUI';
 
 class WebMap extends Component {
     constructor(props) {
@@ -18,7 +20,14 @@ class WebMap extends Component {
             checkGasStation: false,
             checkFood: false,
             checkParksAndOutdoors: false
-        }
+        },
+
+        myPlaceInputText: '',
+        myPlaceSuggestionArr: [],
+        currMyPlace: null,
+        myPlaceSaveInputText: '',
+        myPlaceArr: [] // [{locationName, locationMagicKey, myPlaceName}]
+
     }
 
     toggleCoffeeShop = () => {
@@ -60,6 +69,55 @@ class WebMap extends Component {
         });
         // console.log('toogle Parks and Outdoors');
     }
+
+    onChangeMyPlaceInput = (event) => {
+        this.setState({
+            myPlaceInputText: event.target.value,
+            currMyPlace: null,
+            myPlaceSaveInputText: ''
+        });
+        if (event.target.value !== '') {
+            this.myPlaceSuggestion(event.target.value);
+        }
+    }
+
+    myPlaceSuggestion = (text) => {
+        const baseUrl = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest?f=json";
+        const location = this.view.center.longitude + "," + this.view.center.latitude;
+        const url = encodeURI(baseUrl + "&text=" + text + "&location=" + location);
+        axios.get(url)
+            .then(res => {
+                // console.log(res.data.suggestions);
+                this.setState({myPlaceSuggestionArr: res.data.suggestions});
+            })
+    }
+
+    onClickSuggestion = (myPlaceInfo) => {
+        this.setState({currMyPlace: myPlaceInfo});
+    }
+
+    onMyPlaceSaveInput = (event) => {
+        this.setState({
+            myPlaceSaveInputText: event.target.value
+        });
+    }
+
+    onMyPlaceSave = () => {
+        const locationName = this.state.currMyPlace.text;
+        const locationMagicKey = this.state.currMyPlace.magicKey;
+        const myPlaceName = this.state.myPlaceSaveInputText
+        this.setState({
+            myPlaceArr: this.state.myPlaceArr.concat({
+                locationName: locationName,
+                locationMagicKey: locationMagicKey,
+                myPlaceName: myPlaceName
+            }),
+            myPlaceInputText: '',
+            currMyPlace: null,
+            myPlaceSuggestionArr: [],
+            myPlaceSaveInputText: ''
+        });
+    }
     
     showCoordinates = (elem, pt) => {
         var coords = "Lat/Lon " + pt.latitude.toFixed(3) + " " + pt.longitude.toFixed(3) + 
@@ -92,7 +150,7 @@ class WebMap extends Component {
         if (this.state.locations.checkParksAndOutdoors) {
             categories.push('Parks and Outdoors')
         }
-        console.log(categories);
+        // console.log(categories);
         this.findPlaces(categories, this.view.center)
             .then(results => {
                 console.log(results);
@@ -190,11 +248,10 @@ class WebMap extends Component {
     }
     
     render() {
-        
         return (
             <div>
                 <div className={styles.webmap} ref={this.mapRef} />
-                <MapUI
+                <LocationUI
                     toggleGasStation={this.toggleGasStation}
                     toggleCoffeeShop={this.toggleCoffeeShop}
                     toggleFood={this.toggleFood}
@@ -203,6 +260,17 @@ class WebMap extends Component {
                 <Button id='updateButton'>
                     Update Filter
                 </Button>
+                <MyPlaceUI
+                    onChangeMyPlaceInput={this.onChangeMyPlaceInput}
+                    myPlaceInputText={this.state.myPlaceInputText}
+                    myPlaceSuggestionArr={this.state.myPlaceSuggestionArr}
+                    onClickSuggestion={this.onClickSuggestion}
+                    currMyPlace={this.state.currMyPlace}
+                    onMyPlaceSaveInput={this.onMyPlaceSaveInput}
+                    myPlaceSaveInputText={this.state.myPlaceSaveInputText}
+                    onMyPlaceSave={this.onMyPlaceSave}
+                    myPlaceArr={this.state.myPlaceArr}
+                />
             </div>  
         );
     }
