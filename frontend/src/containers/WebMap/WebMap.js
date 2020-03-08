@@ -16,7 +16,7 @@ const FACILITIES_COLOR_MAP = ['#47476b', '#0033cc', '#339933', '#cc6600', '#0000
 const FACILITIES_CNT_ARR = [10, 10, 10, 10, 5, 10, 10, 10];
 const FACILITIES_CNT_REPORT_ARR = [10, 10, 20, 25, 5, 10, 25, 15];
 // const FACILITIES_CNT_REPORT_ARR = [1, 1, 1, 1, 1, 1, 1, 1];
-const TEMP_TOKEN = 'XxoyHxWwb0hA5Hmi3BnNVh9rH_xk3Xg4eP_tdzTjb6c2X_tqbwNu8uj3hA5Z6t4ZDCHAPfkkjWLxrWQ9pKAteE_75zd42Z6Wq6fvf8ipdbXnkRNiuefbWD9YWiLwzJaRoXYgVNnJSGhfYmJI3cejPw..';
+const TEMP_TOKEN = 'iBKnYbrbgKtQnWich65JzX2hUav5SPngtJNzPgdBf5Z4trzIBMypMViN9DixdG-ygwnC2sGmo2oEiX_RtfSdM-5zrE6LEu0X9r2WntJowWq4EwyOHQCT46ugGicK_DzP3FkzE6sz1poxSXyAE__IfEjJA3LT2lzIwACzmFjp9DCRrnTa_GqsiX3Pi3EYrQ3eUhw60u1uqsEIRiCFg-UeIc5ewVss_73nNwdc55qY0Qc.';
 
 class WebMap extends Component {
     constructor(props) {
